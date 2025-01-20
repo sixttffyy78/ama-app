@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Mail - Modern Mail App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <!-- صفحة تسجيل الدخول -->
+  <div class="flex items-center justify-center h-screen bg-blue-800" id="login-page">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-6 text-center">تسجيل الدخول إلى A Mail</h2>
+      <form id="login-form">
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="login-email">البريد الإلكتروني</label>
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="login-email" placeholder="Email" type="email">
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="login-password">كلمة المرور</label>
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="login-password" placeholder="Password" type="password">
+        </div>
+        <div class="flex items-center justify-between">
+          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onclick="login()">تسجيل الدخول</button>
+        </div>
+        <div class="mt-4 text-center">
+          <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#" onclick="showSignup()">لا تملك حساب؟ أنشئ حساب</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- صفحة إنشاء الحساب -->
+  <div class="hidden flex items-center justify-center h-screen bg-blue-800" id="signup-page">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-6 text-center">إنشاء حساب جديد في A Mail</h2>
+      <form id="signup-form">
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="signup-email">البريد الإلكتروني</label>
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="signup-email" placeholder="Email" type="email">
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="signup-password">كلمة المرور</label>
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="signup-password" placeholder="Password" type="password">
+        </div>
+        <div class="flex items-center justify-between">
+          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onclick="signup()">إنشاء الحساب</button>
+          <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#" onclick="showLogin()">لديك حساب؟ تسجيل الدخول</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function showLogin() {
+      document.getElementById('login-page').classList.remove('hidden');
+      document.getElementById('signup-page').classList.add('hidden');
+    }
+
+    function showSignup() {
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('signup-page').classList.remove('hidden');
+    }
+
+    async function login() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (response.ok) {
+          alert('تم تسجيل الدخول بنجاح!');
+          // قم بإظهار الصفحة الرئيسية هنا.
+        } else {
+          alert('فشل تسجيل الدخول! تحقق من البريد الإلكتروني أو كلمة المرور.');
+        }
+      } catch (error) {
+        console.error('خطأ أثناء تسجيل الدخول:', error);
+      }
+    }
+
+    async function signup() {
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+
+      try {
+        const response = await fetch('/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (response.ok) {
+          alert('تم إنشاء الحساب بنجاح!');
+          showLogin();
+        } else {
+          alert('فشل إنشاء الحساب. حاول مرة أخرى.');
+        }
+      } catch (error) {
+        console.error('خطأ أثناء إنشاء الحساب:', error);
+      }
+    }
+  </script>
+</body>
+</html>
