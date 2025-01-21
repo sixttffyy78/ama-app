@@ -20,7 +20,7 @@
       <form id="login-form">
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="login-email">البريد الإلكتروني</label>
-          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="login-email" placeholder="Email" type="email">
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="login-email" placeholder="Email" type="email" oninput="autoFillIMAPSMTP()">
         </div>
         <div class="mb-6">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="login-password">كلمة المرور</label>
@@ -43,7 +43,7 @@
       <form id="signup-form">
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="signup-email">البريد الإلكتروني</label>
-          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="signup-email" placeholder="Email" type="email">
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="signup-email" placeholder="Email" type="email" oninput="autoFillIMAPSMTP()">
         </div>
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="signup-password">كلمة المرور</label>
@@ -68,15 +68,37 @@
       document.getElementById('signup-page').classList.remove('hidden');
     }
 
+    function autoFillIMAPSMTP() {
+      const email = document.getElementById('signup-email')?.value || document.getElementById('login-email')?.value;
+
+      // تحديد القيم بناءً على البريد الإلكتروني
+      if (email.endsWith('@gmail.com')) {
+        document.getElementById('imapHost')?.setAttribute('value', 'imap.gmail.com');
+        document.getElementById('imapPort')?.setAttribute('value', '993');
+        document.getElementById('smtpHost')?.setAttribute('value', 'smtp.gmail.com');
+        document.getElementById('smtpPort')?.setAttribute('value', '465');
+      } else {
+        // يمكن إضافة مزودات أخرى إذا لزم الأمر
+        document.getElementById('imapHost')?.setAttribute('value', '');
+        document.getElementById('imapPort')?.setAttribute('value', '');
+        document.getElementById('smtpHost')?.setAttribute('value', '');
+        document.getElementById('smtpPort')?.setAttribute('value', '');
+      }
+    }
+
     async function login() {
       const email = document.getElementById('login-email').value;
       const password = document.getElementById('login-password').value;
+      const imapHost = document.getElementById('imapHost')?.value || 'imap.gmail.com';
+      const imapPort = document.getElementById('imapPort')?.value || '993';
+      const smtpHost = document.getElementById('smtpHost')?.value || 'smtp.gmail.com';
+      const smtpPort = document.getElementById('smtpPort')?.value || '465';
 
       try {
         const response = await fetch('/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ email, password, imapHost, imapPort, smtpHost, smtpPort })
         });
 
         if (response.ok) {
@@ -93,12 +115,16 @@
     async function signup() {
       const email = document.getElementById('signup-email').value;
       const password = document.getElementById('signup-password').value;
+      const imapHost = document.getElementById('imapHost')?.value || 'imap.gmail.com';
+      const imapPort = document.getElementById('imapPort')?.value || '993';
+      const smtpHost = document.getElementById('smtpHost')?.value || 'smtp.gmail.com';
+      const smtpPort = document.getElementById('smtpPort')?.value || '465';
 
       try {
         const response = await fetch('/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ email, password, imapHost, imapPort, smtpHost, smtpPort })
         });
 
         if (response.ok) {
